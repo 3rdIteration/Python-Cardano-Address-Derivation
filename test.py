@@ -50,34 +50,41 @@ tests = [
      "wood blame garbage one federal jaguar slogan movie thunder seed apology trigger spoon depth basket fine culture boil render special enforce dish middle antique",
      "")
 ]
+
+# Only using the Mnemonic module to easily load the wordlist to pass to the generation functions, nothing else.
+mnemo = Mnemonic("english")
+
 print("==Testing Cardano Address Derivation==")
 for description, mk_type, mnemonic, passphrase in tests:
     print("===================================================================")
     print("Description: ", description)
     print("Derivation Type: ", mk_type)
     print("Mnemonic: ", mnemonic)
+    print("Passphrase: ", passphrase)
     print("===================================================================")
     print()
 
     if mk_type == "Ledger":
+        # This can all be done in one step with generateMasterKey_Ledger, but breaking it up to print the masterkey
         masterkey = cardano.generateHashKey_Ledger(mnemonic, passphrase.encode())
+        rootKey = cardano.generateRootKey_Ledger(masterkey)
 
     if mk_type == "Icarus":
-        mnemo = Mnemonic("english")
+        # This can all be done in one step with generateMasterKey_Icarus, but breaking it up to print the masterkey
         masterkey = cardano.generateHashKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
                                                      wordlist=mnemo.wordlist, langcode="en",
                                                      trezor=False)
+        rootKey = cardano.generateRootKey_Icarus(masterkey)
 
     if mk_type == "Icarus-Trezor":
-        mnemo = Mnemonic("english")
+        # This can all be done in one step with generateMasterKey_Icarus, but breaking it up to print the masterkey
         masterkey = cardano.generateHashKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
                                                      wordlist=mnemo.wordlist, langcode="en",
                                                      trezor=True)
+        rootKey = cardano.generateRootKey_Icarus(masterkey)
 
     print("MasterKey: ", masterkey.hex())
     print()
-
-    rootKey = cardano.generateRootKey_Icarus(masterkey)
 
     (kL, kR), AP ,cP = rootKey
     print("Root Node")
