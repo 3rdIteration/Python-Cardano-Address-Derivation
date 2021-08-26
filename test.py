@@ -90,7 +90,7 @@ for description, mk_type, mnemonic, passphrase in tests:
     account_path = "1852'/1815'/0'"
     account_node = cardano.derive_child_keys(rootKey, "1852'/1815'/0'", True)
     (kL, kR), AP, cP = account_node
-    print("Account Key (", account_path, ")")
+    print("Account Node (", account_path, ")")
     print("kL:",kL.hex())
     print("kR:",kR.hex())
     print("AP:",AP.hex())
