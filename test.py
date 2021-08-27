@@ -21,19 +21,19 @@ tests = [
     "foo")
     ,
     ("CIP003 Ledger Test Vector (No Iterations)",
-    "ledger",
+    "Ledger",
     "recall grace sport punch exhibit mad harbor stand obey short width stem awkward used stairs wool ugly trap season stove worth toward congress jaguar", #Ledger Test Vector no iterations
-    "")
+    "") #addr1qxklv5v752586224au97squj5726fec82tml7nk3gsgjqgzvem0kvp86dgy5c73cxwjuug0np9hp8j8avdmla36pse5smgm38w
     ,
     ("CIP003 Ledger Test Vector (Iterations, No Passphrase)",
-    "ledger",
+    "Ledger",
     "correct cherry mammal bubble want mandate polar hazard crater better craft exotic choice fun tourist census gap lottery neglect address glow carry old business", #Ledger Test vector with iterations
-    "")
+    "") #addr1qxpfu797ddtf365uc3whw0afm0ncj6mv7ss5qxwvswjc70k6q8y4thzlntjgunsxtk7njdwu0zw5j7pe0ystpejtyxyqxkzhg3
     ,
     ("CIP003 Ledger Test Vector (Passphrase)",
-    "ledger",
+    "Ledger",
     "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art", #Ledger Test vector with iterations + passphrase
-    "foo")
+    "foo") 
     ,
     ("Icarus 12 Word BIP39",
      "Icarus",
@@ -65,28 +65,25 @@ for description, mk_type, mnemonic, passphrase in tests:
     print()
 
     if mk_type == "Ledger":
-        # This can all be done in one step with generateMasterKey_Ledger, but breaking it up to print the masterkey
-        masterkey = cardano.generateHashKey_Ledger(mnemonic, passphrase.encode())
-        rootKey = cardano.generateRootKey_Ledger(masterkey)
+        masterkey = cardano.generateMasterKey_Ledger(mnemonic=mnemonic, passphrase=passphrase.encode())
 
     if mk_type == "Icarus":
         # This can all be done in one step with generateMasterKey_Icarus, but breaking it up to print the masterkey
-        masterkey = cardano.generateHashKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
+        masterkey = cardano.generateMasterKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
                                                      wordlist=mnemo.wordlist, langcode="en",
                                                      trezor=False)
-        rootKey = cardano.generateRootKey_Icarus(masterkey)
 
     if mk_type == "Icarus-Trezor":
         # This can all be done in one step with generateMasterKey_Icarus, but breaking it up to print the masterkey
-        masterkey = cardano.generateHashKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
+        masterkey = cardano.generateMasterKey_Icarus(mnemonic=mnemonic, passphrase=passphrase.encode(),
                                                      wordlist=mnemo.wordlist, langcode="en",
                                                      trezor=True)
-        rootKey = cardano.generateRootKey_Icarus(masterkey)
 
-    print("MasterKey: ", masterkey.hex())
+    (kL, kR), AP, cP = masterkey
+
+    print("MasterKey: ", (kL + kR + cP).hex())
     print()
 
-    (kL, kR), AP ,cP = rootKey
     print("Root Node")
     print("kL:",kL.hex())
     print("kR:",kR.hex())
@@ -95,7 +92,7 @@ for description, mk_type, mnemonic, passphrase in tests:
     print()
 
     account_path = "1852'/1815'/0'"
-    account_node = cardano.derive_child_keys(rootKey, "1852'/1815'/0'", True)
+    account_node = cardano.derive_child_keys(masterkey, "1852'/1815'/0'", True)
     (kL, kR), AP, cP = account_node
     print("Account Node (", account_path, ")")
     print("kL:",kL.hex())
